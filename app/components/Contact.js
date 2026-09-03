@@ -1,111 +1,274 @@
-"use client"
-import React, { useState } from 'react'
+"use client";
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { HiOutlineMail, HiOutlinePhone } from 'react-icons/hi';
-import useShowToast from '@/hooks/useShowToast'
-import {useKindeBrowserClient} from '@kinde-oss/kinde-auth-nextjs'
-import toast from 'react-hot-toast'
+import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from 'react-icons/hi';
+import useShowToast from '@/hooks/useShowToast';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+
+const faqs = [
+  {
+    q: "What file formats are supported for notes?",
+    a: "We support PDF documents (.pdf) as well as high-resolution scans (.jpg, .jpeg, .png) up to 40 MB.",
+  },
+  {
+    q: "How can I find Previous Year Questions (PYQs)?",
+    a: "Navigate to your branch and semester. PYQ files are tagged with 'pyq' in the file name for quick identification.",
+  },
+  {
+    q: "Can I manage or delete the notes I uploaded?",
+    a: "Yes, log in with your college account and visit your Profile page (/usernotes) to manage or delete your uploads.",
+  },
+];
 
 const Contact = () => {
-    const [name, setName] = useState('')
-    const [message, setMessage] = useState('')
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('Feedback');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const {isAuthenticated} = useKindeBrowserClient();
-    const showToast = useShowToast(); 
+  const { isAuthenticated } = useKindeBrowserClient();
+  const showToast = useShowToast();
 
-    // const handleclick = () => {
-    //     if(!name || !message){
-    //         showToast("Error", "All feild must be filled", 'error')
-    //     }
-    //     else{
-    //         showToast('Success', 'Thank you! Your form is submitted', 'success')
-    //         setName('');
-    //         setMessage('');
-    //     }
-    // }
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-        if (name == '' || message == '') {
-            showToast("error", "Please fill all the credentials!")
-            return;
-        }
+    if (!name.trim() || !message.trim()) {
+      showToast('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
 
-        const formData = new FormData();
-        formData.append("name",name)
-        formData.append("message",message)
-    
-        formData.append("access_key", "52d56baf-e962-4370-9dd1-bf3c3dcb66a6");
-    
-        const response = await fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          body: formData
-        });
-    
-        const data = await response.json();
-    
-        if (data.success) {
-            showToast("success", "message sent successfully");
-            setName('');
-            setMessage('');
-        } else {
-          console.log("Error", data);
-          showToast("error", data.message);
-        }
-    };
-    return (
-        <div>
-            <div className='flex md:justify-evenly justify-center md:flex-row flex-col items-center px-4 py-4'>
-                {/* Left side */}
-                <div className='flex flex-col justify-center items-center'>
-                    <p className="md:text-5xl text-3xl font-bold text-black md:mb-12 mb-5 md:ml-8">CONTACT</p>
-                    {/* Email icon */}
-                    <div className="flex items-center mt-2 md:ml-8">
-                        <HiOutlineMail className="mr-2" size={20} />
-                        <span>Email: teaminnoreva@nitjsr.ac.in</span>
-                    </div>
-                    {/* Phone icon */}
-                    <div className="flex items-center mt-2 md:ml-8">
-                        <HiOutlinePhone className="mr-2" size={20} />
-                        <span>Phone: +91 7004632130</span>
-                    </div>
-                    <div className="flex items-center mt-2 md:ml-8">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
-</svg>
-                        <span className='hover:underline hover:cursor-pointer hover:text-[gray]'><Link href="/members">Designed and Developed by &rarr;
-                        </Link> </span>
-                        
-                    </div>
-                    <span className='flex items-center mt-6 w-28'><img src="/innoreva_logo.png" alt="" /></span>
-                </div>
-                {/* Right side */}
-                <div className="bg-lightblue rounded-lg p-4 mt-7 md:mt-0">
-                    <div className="bg-dark-blue rounded-lg p-4 lg:py-10">
-                        <h3 className="text-xl mb-2 text-white">Share Your Experience With Us!</h3>
-                        <div className="p-4 bg-dark-blue rounded-lg">
-                            <input type="text" className="w-full p-2 mb-2 border border-blue-500 rounded-lg bg-light-blue" placeholder="Your Name" 
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                            <textarea className="w-full p-2 border border-blue-500 rounded-lg bg-light-blue" rows="4" placeholder="Your Review"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                            ></textarea>
-                        </div>
-                        <div className='flex justify-center items-center'>
-                            {isAuthenticated ? (<div onClick={handleSubmit} className='border cursor-pointer w-32 border-blue-500 rounded-lg bg-light-blue p-2 text-center hover:scale-[1.02]'>
-                                Submit
-                            </div>) : (
-                            <div onClick={() => showToast('Error','Not Authorised Please Login !','error')} className='border cursor-pointer w-32 border-blue-500 rounded-lg bg-light-blue p-2 text-center hover:scale-[1.02]'>
-                                Submit
-                            </div>)}
-                        </div>
-                    </div>
-                </div>
-            </div>
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('category', category);
+      formData.append('message', `[Category: ${category}] ${message}`);
+      formData.append('access_key', '52d56baf-e962-4370-9dd1-bf3c3dcb66a6');
+
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        showToast('Message Sent', 'Thank you! Your feedback has been received.', 'success');
+        setName('');
+        setMessage('');
+      } else {
+        console.error('Web3Forms Error', data);
+        showToast('Error', data.message || 'Unable to send message.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error', 'Network error. Please try again later.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <section className="py-10 sm:py-14 bg-[#fbfbfa] dark:bg-[#121212] border-t border-neutral-200/70 dark:border-neutral-800 transition-colors w-full overflow-hidden">
+      <div className="w-full px-4 sm:px-8 lg:px-14 xl:px-20">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-300 mb-2.5">
+            <span>Get in Touch</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white">
+            Contact &amp; Support Hub
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-neutral-600 dark:text-neutral-400 font-normal leading-relaxed">
+            Have questions, want to report missing notes, or suggest new features? Reach out directly or submit your thoughts below.
+          </p>
         </div>
-    )
-}
 
-export default Contact
+        {/* 2-Column Full-Screen Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Left Column: Direct Info & FAQs */}
+          <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
+            {/* Primary Contact Cards */}
+            <div className="p-6 sm:p-8 rounded-3xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1b1b1b] shadow-xs space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-2xl">
+                    🏛️
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-neutral-900 dark:text-white">
+                      Innoreva Web Team
+                    </h3>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      National Institute of Technology Jamshedpur
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-mono uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-full font-semibold">
+                  Online
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <a
+                  href="mailto:teaminnoreva@nitjsr.ac.in"
+                  className="flex items-center gap-3 p-3.5 rounded-2xl border border-neutral-200/80 dark:border-neutral-700 bg-[#fbfbfa] dark:bg-neutral-800/70 hover:bg-neutral-100/70 dark:hover:bg-neutral-700/80 transition-colors group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-600 flex items-center justify-center text-neutral-700 dark:text-neutral-200 group-hover:scale-105 transition-transform">
+                    <HiOutlineMail size={20} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] uppercase tracking-wider font-semibold text-neutral-400">Email</div>
+                    <div className="text-xs font-semibold text-neutral-900 dark:text-white truncate">teaminnoreva@nitjsr.ac.in</div>
+                  </div>
+                </a>
+
+                <a
+                  href="tel:+917004632130"
+                  className="flex items-center gap-3 p-3.5 rounded-2xl border border-neutral-200/80 dark:border-neutral-700 bg-[#fbfbfa] dark:bg-neutral-800/70 hover:bg-neutral-100/70 dark:hover:bg-neutral-700/80 transition-colors group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-600 flex items-center justify-center text-neutral-700 dark:text-neutral-200 group-hover:scale-105 transition-transform">
+                    <HiOutlinePhone size={20} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] uppercase tracking-wider font-semibold text-neutral-400">Helpline</div>
+                    <div className="text-xs font-semibold text-neutral-900 dark:text-white">+91 7004632130</div>
+                  </div>
+                </a>
+              </div>
+
+              {/* Team Credits Link Card */}
+              <Link
+                href="/members"
+                className="flex items-center justify-between p-4 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-all group shadow-sm hover:scale-[1.01]"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">👥</span>
+                  <div>
+                    <h4 className="text-sm font-semibold">Designed &amp; Developed by Web Team</h4>
+                    <p className="text-xs text-neutral-400 dark:text-neutral-600">Meet the engineers and designers behind NoteShaala</p>
+                  </div>
+                </div>
+                <span className="text-sm group-hover:translate-x-1 transition-transform">&rarr;</span>
+              </Link>
+            </div>
+
+            {/* Quick FAQs */}
+            <div className="p-6 sm:p-7 rounded-3xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1b1b1b] shadow-xs space-y-4 flex-1">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                <span>💡 Frequently Asked Questions</span>
+              </div>
+
+              <div className="space-y-3">
+                {faqs.map((faq, i) => (
+                  <div key={i} className="p-3.5 rounded-xl bg-[#fbfbfa] dark:bg-neutral-800/60 border border-neutral-200/70 dark:border-neutral-700/70 space-y-1">
+                    <p className="text-xs font-bold text-neutral-900 dark:text-white">{faq.q}</p>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">{faq.a}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Full-Screen Message Form with matching height */}
+          <div className="lg:col-span-6 flex flex-col h-full">
+            <div className="p-6 sm:p-10 rounded-3xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1b1b1b] shadow-xs space-y-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 className="text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">
+                  Send Us a Message
+                </h3>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+                  We reply to student inquiries, content corrections, and feature requests.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5 flex-1 flex flex-col justify-between">
+                <div className="space-y-5">
+                  {/* Category Selector */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-300 mb-2">
+                      Topic / Category
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {['Feedback', 'Missing Notes', 'Bug Report', 'General'].map((cat) => (
+                        <button
+                          type="button"
+                          key={cat}
+                          onClick={() => setCategory(cat)}
+                          className={`py-2 px-3 text-xs font-medium rounded-xl border transition-all ${
+                            category === cat
+                              ? 'bg-[#191919] dark:bg-white text-white dark:text-neutral-900 border-neutral-900 dark:border-white shadow-xs'
+                              : 'bg-[#fbfbfa] dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Name */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-300 mb-1.5">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. Rahul Sharma"
+                      className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 bg-[#fbfbfa] dark:bg-neutral-800/80 transition"
+                    />
+                  </div>
+
+                  {/* Message */}
+                  <div className="flex-1 flex flex-col">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-300 mb-1.5">
+                      Your Message
+                    </label>
+                    <textarea
+                      rows={5}
+                      required
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Tell us what study materials you are looking for, or share your feedback..."
+                      className="w-full flex-1 min-h-[140px] px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:border-neutral-900 dark:focus:border-neutral-100 focus:ring-1 focus:ring-neutral-900 dark:focus:ring-neutral-100 bg-[#fbfbfa] dark:bg-neutral-800/80 transition resize-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Submit Action */}
+                <div className="pt-2">
+                  {isAuthenticated ? (
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-3.5 px-6 rounded-xl bg-[#191919] dark:bg-white text-white dark:text-neutral-900 font-medium text-base hover:bg-neutral-800 dark:hover:bg-neutral-200 shadow-sm transition-all disabled:opacity-50 hover:scale-[1.01]"
+                    >
+                      {loading ? 'Sending Message...' : 'Submit Message'}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        showToast('Authentication Required', 'Please sign in or register to submit feedback.', 'error')
+                      }
+                      className="w-full py-3.5 px-6 rounded-xl bg-[#191919] dark:bg-white text-white dark:text-neutral-900 font-medium text-base hover:bg-neutral-800 dark:hover:bg-neutral-200 shadow-sm transition-all hover:scale-[1.01]"
+                    >
+                      Submit Message
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Contact;
+
+

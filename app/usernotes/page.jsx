@@ -1,90 +1,248 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import { ThreeDots } from "react-loader-spinner"
+"use client";
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import useShowToast from '@/hooks/useShowToast';
-import { MdDelete } from "react-icons/md";
-import DeleteComponent from '../components/DeleteComponent';
+import { motion } from 'framer-motion';
 
 const Page = () => {
-    const [notes, setNotes] = useState([]);
-    const [loading, setLoading] = useState(false)
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
+  const { user, isAuthenticated } = useKindeBrowserClient();
+  const showToast = useShowToast();
 
-    const { user } = useKindeBrowserClient();
-    const showToast = useShowToast();
+  const fetchUserNotes = async () => {
+    if (!user?.email) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`https://noteshaala.onrender.com/api/notes/name/${user.email}`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setNotes(data);
+      } else {
+        setNotes([]);
+      }
+    } catch (error) {
+      showToast('Error', 'Unable to load your uploads. Please try again.', 'error');
+      setNotes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (!user?.email) {
-                // user is not defined yet, wait for it to be defined
-                return;
-            }
+  useEffect(() => {
+    if (user?.email) {
+      fetchUserNotes();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
-            const postedBy = user.email;
-            setLoading(true);
-            try {
-                const res = await fetch(`https://noteshaala.onrender.com/api/notes/name/${postedBy}`)
-                const data = await res.json();
+  const handleDelete = async (id, fileName) => {
+    if (!window.confirm(`Are you sure you want to delete "${fileName || 'this file'}"?`)) return;
 
-                // console.log(data)
-                setNotes(data);
-            }
-            catch (error) {
-                showToast('Error', error.response?.data?.message || 'Something went wrong', 'error')
-            }
-            finally {
-                setLoading(false)
-            }
-        }
+    setDeletingId(id);
+    try {
+      const res = await fetch(`https://noteshaala.onrender.com/api/notes/delete/${id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
 
-        fetchData();
-    }, [user]);
+      if (data.error) {
+        showToast('Error', data.error, 'error');
+        return;
+      }
 
-    return (
-        <div className="flex flex-col md:px-20 px-10 items-center lg:mt-24 mt-24 mb-10 gap-10 min-h-[80vh]">
-            <h2 className='text-xl my-5'>Hey!  <span className='text-[#2577ece4]'>{user?.email}</span> visit yor profile</h2>
-            {
-                notes && notes?.length > 0 && notes.map((item, id) => (
-                    <>
-                        <div className='flex flex-col  items-center justify-center w-40 text-center px-3' key={item?._id}>
-                            <div className='flex border-2 border-gray-300 w-[90vw] sm:w-[60vw] lg:w-[30vw] rounded-lg p-3 items-center justify-center gap-x-40'>
-                                <div className='flex flex-col w-3/4 items-center justify-center'>
-                                    <a href={item.file} target='_blank'>
-                                        <img src="/pdficon.png" alt="" className='w-24' />
-                                    </a>
-                                    <p>{item.fileName}</p>
-                                </div>
-                                <div className='text-2xl flex items-center justify-center'>
-                                    <DeleteComponent id={item?._id}/>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                ))
-            }
-            {
-                loading && notes.length === 0 && (
-                    <ThreeDots
-                        visible={true}
-                        height="80"
-                        width="80"
-                        color="#29b5f6"
-                        radius="9"
-                        ariaLabel="three-dots-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                    />
-                )
-            }
-            {
-                !loading && notes.length === 0 && (
-                    <div className='text-xl my-10'>
-                        Notes are not uploaded yet
-                    </div>
-                )
-            }
+      showToast('Deleted', 'Note removed successfully.', 'success');
+      setNotes((prev) => prev.filter((note) => note._id !== id));
+    } catch (error) {
+      showToast('Error', error.message || 'Failed to delete note', 'error');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  return (
+    <div className="min-h-screen w-full pt-24 pb-16 bg-[#fbfbfa] dark:bg-[#121212] text-neutral-900 dark:text-[#ececec] transition-colors overflow-x-hidden">
+      {/* Background Decorative Pattern */}
+      <div
+        className="fixed inset-0 pointer-events-none opacity-30 dark:opacity-10"
+        style={{
+          backgroundImage: 'radial-gradient(#d4d4d4 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
+        }}
+      />
+
+      <div className="relative w-full px-4 sm:px-8 lg:px-14 xl:px-20 space-y-8">
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center gap-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">
+          <Link href="/" className="hover:text-neutral-900 dark:hover:text-white transition-colors">
+            Home
+          </Link>
+          <span>/</span>
+          <span className="text-neutral-900 dark:text-white font-semibold bg-neutral-200/70 dark:bg-neutral-800 px-2.5 py-1 rounded-md">
+            Contributor Dashboard
+          </span>
         </div>
-    )
-}
 
-export default Page
+        {/* User Profile Header Banner */}
+        <div className="w-full bg-white dark:bg-[#1b1b1b] rounded-3xl border border-neutral-200/90 dark:border-neutral-800 p-6 sm:p-10 lg:p-12 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Verified Contributor</span>
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-neutral-900 dark:text-white leading-tight">
+              {user?.given_name ? `${user.given_name}'s Uploads` : 'My Uploaded Notes'}
+            </h1>
+
+            <p className="text-sm sm:text-base lg:text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed font-mono">
+              Account: <span className="font-semibold text-neutral-900 dark:text-white">{user?.email || 'Not logged in'}</span>
+            </p>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex flex-wrap lg:flex-col gap-3 shrink-0">
+            <Link
+              href="/uploadnotes"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-[#191919] dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-200 shadow-md transition-all hover:scale-[1.02]"
+            >
+              <span>+ Upload New Material</span>
+            </Link>
+
+            <div className="text-xs font-mono text-neutral-500 dark:text-neutral-400 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200/70 dark:border-neutral-700">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>{notes.length} Total Uploads</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Uploads Grid */}
+        <div className="w-full space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+              Your Published Notes &amp; Files
+            </h2>
+            <span className="text-xs font-mono text-neutral-400">
+              {notes.length} {notes.length === 1 ? 'file' : 'files'}
+            </span>
+          </div>
+
+          {loading ? (
+            /* Skeleton Loading Grid */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
+              {[1, 2, 3, 4].map((n) => (
+                <div
+                  key={n}
+                  className="p-7 rounded-3xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-[#1b1b1b] animate-pulse space-y-4"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-neutral-200 dark:bg-neutral-800" />
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4" />
+                      <div className="h-3 bg-neutral-100 dark:bg-neutral-800/60 rounded w-1/2" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : notes.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
+              {notes.map((item, i) => (
+                <motion.div
+                  key={item._id || i}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: i * 0.03 }}
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  className="p-7 rounded-3xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1b1b1b] hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-md transition-all duration-300 flex flex-col justify-between group w-full"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 flex items-center justify-center text-3xl shrink-0">
+                        📄
+                      </div>
+                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-3 py-1 rounded-lg">
+                        {item.branch ? `${item.branch} • Sem ${item.semester}` : 'Public Note'}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-bold text-neutral-900 dark:text-white tracking-tight break-words line-clamp-2">
+                        {item.fileName || item.subject || 'Uploaded Note'}
+                      </h3>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 font-mono truncate">
+                        Subject: {item.subject || 'General'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between gap-2">
+                    <a
+                      href={item.file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-3 px-4 rounded-xl bg-[#191919] dark:bg-white text-white dark:text-neutral-900 text-xs font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all text-center flex items-center justify-center gap-1.5 shadow-2xs"
+                    >
+                      <span>Open Note</span>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+
+                    <button
+                      type="button"
+                      disabled={deletingId === item._id}
+                      onClick={() => handleDelete(item._id, item.fileName)}
+                      className="p-3 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/60 transition-colors disabled:opacity-50"
+                      title="Delete this note"
+                    >
+                      {deletingId === item._id ? (
+                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            /* Empty State */
+            <div className="text-center py-20 px-8 rounded-3xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1b1b1b] w-full max-w-3xl mx-auto space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-3xl mx-auto">
+                📚
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
+                  You haven&apos;t uploaded any notes yet
+                </h3>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
+                  Start sharing lecture summaries, assignments, or previous year question papers with your campus community.
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <Link
+                  href="/uploadnotes"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#191919] dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-200 shadow-md transition-all hover:scale-[1.02]"
+                >
+                  <span>+ Upload Your First Note</span>
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Page;

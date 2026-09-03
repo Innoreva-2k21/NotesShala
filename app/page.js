@@ -11,14 +11,9 @@ import About from "./components/about";
 
 export default function Home() {
   return (
-    <div>
-      <NavBar />
-      <div>
-        <Hero/>
-      </div>
-      <div>
-        <About/>
-      </div>
+    <div className="flex flex-col min-h-screen">
+      <Hero />
+      <About />
       <div id="notes">
         <NotesBranchWise />
       </div>
