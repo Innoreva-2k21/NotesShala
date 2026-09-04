@@ -28,6 +28,8 @@ export async function POST(req) {
         {
           folder: "noteshaala_notes",
           resource_type: "raw",
+          type: "upload",
+          access_mode: "public",
           public_id: `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`,
         },
         (error, result) => {
