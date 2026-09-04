@@ -30,7 +30,7 @@ const Page = () => {
   const [subjectSearchFocused, setSubjectSearchFocused] = useState(false);
   const fileInputRef = useRef(null);
 
-  const fileSizeLimit = 40 * 1024 * 1024; // 40MB
+  const fileSizeLimit = 10 * 1024 * 1024; // 10MB
   const { user, isAuthenticated } = useKindeBrowserClient();
   const postedBy = user?.email || (isAuthenticated && user ? user.email : 'student@nitjsr.ac.in');
   const showToast = useShowToast();
@@ -47,7 +47,7 @@ const Page = () => {
     }
 
     if (selectedFile.size > fileSizeLimit) {
-      showToast('File Too Large', 'File size exceeds the 40 MB maximum limit.', 'error');
+      showToast('File Too Large', 'File size exceeds the 10 MB maximum limit.', 'error');
       return false;
     }
 
@@ -131,7 +131,7 @@ const Page = () => {
       formdata.append("subject", subject);
       formdata.append("file", file);
 
-      const res = await axios.post(`https://noteshaala.onrender.com/api/notes/upload`, formdata, {
+      const res = await axios.post(`/api/notes/upload`, formdata, {
         headers: { "Content-Type": "multipart/form-data" }
       });
 
@@ -501,8 +501,8 @@ const Page = () => {
                   },
                   {
                     icon: '📦',
-                    title: '40 MB Size Limit',
-                    desc: 'The max upload limit is 40 MB. For large scanned PDFs, consider using a PDF compressor before uploading.',
+                    title: '10 MB Size Limit',
+                    desc: 'The max upload limit is 10 MB (Cloudinary free tier). For large scanned PDFs, consider using a PDF compressor before uploading.',
                   },
                   {
                     icon: '🔒',

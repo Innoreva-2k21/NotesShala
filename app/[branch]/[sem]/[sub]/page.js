@@ -36,7 +36,7 @@ const Page = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://noteshaala.onrender.com/api/notes/${branchCode}/${semester}/${encodeURIComponent(subjectName)}`
+          `/api/notes/${branchCode}/${semester}/${encodeURIComponent(subjectName)}`
         );
         const data = await res.json();
 

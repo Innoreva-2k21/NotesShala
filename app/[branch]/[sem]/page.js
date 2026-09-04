@@ -36,7 +36,7 @@ const Page = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`https://noteshaala.onrender.com/api/notes/${branchCode}/${semester}`);
+        const res = await fetch(`/api/notes/${branchCode}/${semester}`);
         const data = await res.json();
 
         if (data.error) {

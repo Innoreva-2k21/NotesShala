@@ -11,7 +11,7 @@ const DeleteComponent = ({ id }) => {
       e.preventDefault();
       if (!window.confirm('Are you sure want to delete this file?')) return;
 
-      const res = await fetch(`https://noteshaala.onrender.com/api/notes/delete/${id}`, {
+      const res = await fetch(`/api/notes/delete/${id}`, {
         method: 'DELETE',
       })
       const data = await res.json();

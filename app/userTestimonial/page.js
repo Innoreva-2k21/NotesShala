@@ -59,7 +59,7 @@ const UserTestimonial = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("https://noteshaala.onrender.com/api/testimonials", {
+      const res = await fetch("/api/testimonials", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

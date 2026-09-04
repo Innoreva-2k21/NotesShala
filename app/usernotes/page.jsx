@@ -16,7 +16,7 @@ const Page = () => {
     if (!user?.email) return;
     setLoading(true);
     try {
-      const res = await fetch(`https://noteshaala.onrender.com/api/notes/name/${user.email}`);
+      const res = await fetch(`/api/notes/byuser/${encodeURIComponent(user.email)}`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setNotes(data);
@@ -44,7 +44,7 @@ const Page = () => {
 
     setDeletingId(id);
     try {
-      const res = await fetch(`https://noteshaala.onrender.com/api/notes/delete/${id}`, {
+      const res = await fetch(`/api/notes/delete/${id}`, {
         method: 'DELETE',
       });
       const data = await res.json();
