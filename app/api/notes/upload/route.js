@@ -27,7 +27,7 @@ export async function POST(req) {
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: "noteshaala_notes",
-          resource_type: "auto",
+          resource_type: "raw",
           public_id: `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`,
         },
         (error, result) => {
