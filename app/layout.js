@@ -13,13 +13,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-
-    <html lang="en">
-      <body className={`${inter.className} bg-slate-100`}>
+    <html lang="en" className="scroll-smooth">
+      <body className={`${inter.className} bg-[#fbfbfa] text-[#191919] dark:bg-[#121212] dark:text-[#ececec] min-h-screen w-full overflow-x-hidden antialiased selection:bg-neutral-200 selection:text-neutral-900 dark:selection:bg-neutral-800 dark:selection:text-neutral-100 transition-colors duration-200`}>
         <ChakraProvider>
-          <NavBar/>
-            {children}
-          <Footer/>
+          <NavBar />
+          <main className="w-full">{children}</main>
+          <Footer />
         </ChakraProvider>
       </body>
     </html>

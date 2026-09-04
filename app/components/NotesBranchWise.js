@@ -1,154 +1,157 @@
-"use client"
-import Link from 'next/link'
-import React from 'react'
-import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
-import useShowToast from '@/hooks/useShowToast'
+"use client";
+import Link from 'next/link';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import useShowToast from '@/hooks/useShowToast';
+
+const branches = [
+  {
+    code: 'CSE',
+    name: 'Computer Science & Engineering',
+    shortName: 'Computer Science',
+    icon: '💻',
+    color: 'bg-blue-50 text-blue-600 border-blue-100',
+    description: 'Algorithms, OS, DBMS, Networks, AI & Systems',
+  },
+  {
+    code: 'ECE',
+    name: 'Electronics & Communication',
+    shortName: 'Electronics & Comm.',
+    icon: '📡',
+    color: 'bg-purple-50 text-purple-600 border-purple-100',
+    description: 'Signals, VLSI, Analog & Digital Circuits, Comms',
+  },
+  {
+    code: 'EE',
+    name: 'Electrical Engineering',
+    shortName: 'Electrical',
+    icon: '⚡',
+    color: 'bg-amber-50 text-amber-600 border-amber-100',
+    description: 'Power Systems, Machines, Control & Drives',
+  },
+  {
+    code: 'ME',
+    name: 'Mechanical Engineering',
+    shortName: 'Mechanical',
+    icon: '⚙️',
+    color: 'bg-rose-50 text-rose-600 border-rose-100',
+    description: 'Thermodynamics, Fluid Mechanics, Design & CAD',
+  },
+  {
+    code: 'CE',
+    name: 'Civil Engineering',
+    shortName: 'Civil',
+    icon: '🏗️',
+    color: 'bg-orange-50 text-orange-600 border-orange-100',
+    description: 'Structures, Geotech, Surveying, Transportation',
+  },
+  {
+    code: 'MME',
+    name: 'Materials & Metallurgical Engg.',
+    shortName: 'Material & Metallurgy',
+    icon: '🧪',
+    color: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    description: 'Physical Metallurgy, Thermodynamics, Materials',
+  },
+  {
+    code: 'PIE',
+    name: 'Production & Industrial Engg.',
+    shortName: 'Production & Industrial',
+    icon: '🏭',
+    color: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    description: 'Manufacturing, Operations Research, Quality',
+  },
+  {
+    code: 'ECM',
+    name: 'Computational Mechanics',
+    shortName: 'Computational Mechanics',
+    icon: '📐',
+    color: 'bg-teal-50 text-teal-600 border-teal-100',
+    description: 'Numerical Methods, FEA, Continuum & Simulation',
+  },
+];
 
 const NotesBranchWise = () => {
-    const { isAuthenticated } = useKindeBrowserClient();
-    const showToast = useShowToast();
-    return  (
-        <div 
-        className='py-20 min-h-screen bg-cover bg-center bg-no-repeat'
-        style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1527176930608-09cb256ab504?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-        
-            
-        }}
-    >
-            <div className='px-10 py-5 mt-5 lg:ml-20 text-center '>
-                <h2 className='text-3xl lg:text-5xl font-semibold py-2 pb-4'>Notes</h2>
-                <p>Gets your hands on your study materials now !</p>
-            </div>
-            {isAuthenticated ? (<div className="flex justify-center items-center gap-10">
-                <div className='lg:w-[65vw] mt-8 flex flex-wrap justify-center items-center gap-10 lg:gap-16'>
-                    <div className="flex flex-col justify-center items-center">
-                        <Link href='/EE'>
-                            <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                Electrical
-                            </div>
-                        </Link>
+  const { isAuthenticated } = useKindeBrowserClient();
+  const showToast = useShowToast();
 
-                    </div>
-                    <div className="flex flex-col justify-center items-center">
-                        <Link href='/ECE'>
-                            <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl text-center flex justify-center items-center p-2  bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                Electronics and Communication
-                            </div>
-                        </Link>
+  const handleUnauthClick = () => {
+    showToast('Authentication Required', 'Please sign in or register to access notes and study materials.', 'error');
+  };
 
-                    </div>
-                    <div className="flex flex-col justify-center items-center">
-                        <Link href='/ME'>
-                            <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                Mechanical
-                            </div>
-                        </Link>
-
-                    </div>
-                    <div className="flex flex-col justify-center items-center">
-                        <Link href='/CSE'>
-                            <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                Computer Science
-                            </div>
-                        </Link>
-
-                    </div>
-                    <div className="flex flex-col justify-center items-center">
-                        <Link href='/CE'>
-                            <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                Civil
-                            </div>
-                        </Link>
-                    </div>
-                    <div className="flex flex-col justify-center items-center">
-                        <Link href='/MME'>
-                            <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                Material and Metallurgy
-                            </div>
-                        </Link>
-
-                    </div>
-                    <div className="flex flex-col justify-center items-center">
-                        <Link href='/PIE'>
-                            <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                Production and Industrial
-                            </div>
-                        </Link>
-
-                    </div>
-                    <div className="flex flex-col justify-center items-center">
-                        <Link href='/ECM'>
-                            <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                Computational mechanics
-                            </div>
-                        </Link>
-                    </div>
-                </div>
-            </div>) :
-                (
-                    <div className="flex justify-center items-center gap-10">
-                        <div className='lg:w-[65vw] mt-8 flex flex-wrap justify-center items-center gap-10 lg:gap-16'>
-                            <div className="flex flex-col justify-center items-center">
-                                <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl cursor-pointer text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'
-                                    onClick={() => showToast('Error', 'Please login/register to get notes', 'error')}
-                                >
-                                    Electrical
-                                </div>
-                            </div>
-                            <div className="flex flex-col justify-center items-center">
-                                <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl cursor-pointer text-center flex justify-center items-center p-2  bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'
-                                    onClick={() => showToast('Error', 'Please login/register to get notes', 'error')}
-                                >
-                                    Electronics and Communication
-                                </div>
-                            </div>
-                            <div className="flex flex-col justify-center items-center">
-                                <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl cursor-pointer text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'
-                                    onClick={() => showToast('Error', 'Please login/register to get notes', 'error')}
-                                >
-                                    Mechanical
-                                </div>
-                            </div>
-                            <div className="flex flex-col justify-center items-center">
-                                <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl cursor-pointer text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'
-                                    onClick={() => showToast('Error', 'Please login/register to get notes', 'error')}
-                                >
-                                    Computer Science
-                                </div>
-                            </div>
-                            <div className="flex flex-col justify-center items-center">
-                                <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl cursor-pointer text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'
-                                    onClick={() => showToast('Error', 'Please login/register to get notes', 'error')}
-                                >
-                                    Civil
-                                </div>
-                            </div>
-                            <div className="flex flex-col justify-center items-center">
-                                <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl cursor-pointer text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'
-                                    onClick={() => showToast('Error', 'Please login/register to get notes', 'error')}
-                                >
-                                    Material and Metallurgy
-                                </div>
-
-                            </div>
-                            <div className="flex flex-col justify-center items-center">
-                                <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl cursor-pointer text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'
-                                    onClick={() => showToast('Error', 'Please login/register to get notes', 'error')}
-                                >
-                                    Production and Industrial
-                                </div>
-                            </div>
-                            <div className="flex flex-col justify-center items-center">
-                                <div className='w-32 h-28 md:w-40 md:h-36 rounded-xl cursor-pointer text-center flex justify-center items-center p-2 bg-gradient-to-r from-[#29b5f6] to-[#67c5f1d5] transition-all duration-300 hover:scale-105'>
-                                    Computational mechanics
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+  return (
+    <section className="py-10 sm:py-14 bg-white dark:bg-[#121212] border-t border-neutral-200/70 dark:border-neutral-800 transition-colors w-full">
+      <div className="w-full px-4 sm:px-8 lg:px-14 xl:px-20">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-300 mb-2.5">
+            <span>Academic Database</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white">
+            Notes by Department
+          </h2>
+          <p className="mt-2 text-sm sm:text-base text-neutral-600 dark:text-neutral-400 font-normal leading-relaxed">
+            Get your hands on your study materials now! Select your branch to browse semester-wise notes, lecture slides, and previous year question papers.
+          </p>
         </div>
-    )
-}
 
-export default NotesBranchWise
+        {/* 8-Branch Bento Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {branches.map((branch, index) => {
+            const cardContent = (
+              <motion.div
+                initial={{ opacity: 0, y: 22, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ duration: 0.45, delay: index * 0.05 }}
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="h-full p-6 rounded-2xl border border-neutral-200/90 dark:border-neutral-800 bg-[#fbfbfa] dark:bg-[#1b1b1b] hover:bg-white dark:hover:bg-[#222222] hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-md transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`w-11 h-11 rounded-xl border flex items-center justify-center text-xl group-hover:scale-110 transition-transform ${branch.color}`}>
+                      {branch.icon}
+                    </div>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2.5 py-1 rounded-md border border-neutral-200/70 dark:border-neutral-700">
+                      {branch.code}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-neutral-900 dark:text-white tracking-tight group-hover:text-black dark:group-hover:text-white mb-1.5">
+                    {branch.shortName}
+                  </h3>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">
+                    {branch.description}
+                  </p>
+                </div>
+
+                <div className="mt-5 pt-3.5 border-t border-neutral-200/60 dark:border-neutral-800 flex items-center justify-between text-xs font-medium text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors">
+                  <span>Semester 1–8</span>
+                  <span className="group-hover:translate-x-1 transition-transform">Explore &rarr;</span>
+                </div>
+              </motion.div>
+            );
+
+            return (
+              <div key={branch.code}>
+                {isAuthenticated ? (
+                  <Link href={`/${branch.code}`}>
+                    {cardContent}
+                  </Link>
+                ) : (
+                  <div onClick={handleUnauthClick}>
+                    {cardContent}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default NotesBranchWise;
+
