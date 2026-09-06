@@ -3,6 +3,7 @@ import "./globals.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import NavBar from "./navbar/NavBar";
 import Footer from "./footer/Footer";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +36,20 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-M3XBKHTSQ3"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-M3XBKHTSQ3');
+          `}
+        </Script>
+      </head>
       <body className={`${inter.className} bg-[#fbfbfa] text-[#191919] dark:bg-[#121212] dark:text-[#ececec] min-h-screen w-full overflow-x-hidden antialiased selection:bg-neutral-200 selection:text-neutral-900 dark:selection:bg-neutral-800 dark:selection:text-neutral-100 transition-colors duration-200`}>
         <ChakraProvider>
           <NavBar />
